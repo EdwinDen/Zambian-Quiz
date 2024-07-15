@@ -9,16 +9,12 @@ public class ZambianQuiz extends JFrame{
 
     public void initialize() {
         /* *************Question Page************** */
-        JLabel answer = new JLabel("Answer");
-        answer.setFont(mainFont);
-
-        answerBox = new JTextField();
-        answer.setFont(mainFont);
+        JLabel timeLabel = new JLabel("Time: ");
+        timeLabel.setFont(mainFont);
 
         JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(4, 1, 5, 5));
-        formPanel.add(answer);
-        formPanel.add(answerBox);
+//        formPanel.setLayout(new BorderLayout());
+        formPanel.add(timeLabel);
 
         /* ************TITLE LABEL********** */
         lbWelcome = new JLabel();
