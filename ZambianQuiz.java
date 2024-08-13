@@ -1,24 +1,30 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Timer;
 import javax.swing.*;
 
 public class ZambianQuiz extends JFrame{
     final private Font mainFont = new Font("Segoe print", Font.BOLD, 18);
     JTextField answerBox;
-    JLabel lbWelcome;
+    JLabel scoreLabel;
 
     public void initialize() {
         /* *************Question Page************** */
-        JLabel timeLabel = new JLabel("Time: ");
+        JLabel timeLabel = new JLabel("Time: ", SwingConstants.CENTER);
         timeLabel.setFont(mainFont);
 
+        JLabel timerLabel = new JLabel("13:07", SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+
+
         JPanel formPanel = new JPanel();
-//        formPanel.setLayout(new BorderLayout());
+        formPanel.setLayout(new GridLayout(2, 1, 5, 5));
         formPanel.add(timeLabel);
+        formPanel.add(timerLabel);
 
         /* ************TITLE LABEL********** */
-        lbWelcome = new JLabel();
-        lbWelcome.setFont(mainFont);
+        scoreLabel = new JLabel();
+        scoreLabel.setFont(mainFont);
 
         /* ************Instructions******** */
         JLabel instruction = new JLabel("Type the correct answer in the text box and press 'NEXT'.");
@@ -33,7 +39,7 @@ public class ZambianQuiz extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String ans = answerBox.getText();
-                lbWelcome.setText("Your answer is " + ans);
+                scoreLabel.setText("Your answer is " + ans);
                 instruction.setVisible(false);
             }
             
@@ -44,7 +50,7 @@ public class ZambianQuiz extends JFrame{
         back.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                lbWelcome.setText("");
+                scoreLabel.setText("");
                 answerBox.setText("");
             }
         });
@@ -58,14 +64,14 @@ public class ZambianQuiz extends JFrame{
         maiPanel.setLayout(new BorderLayout());
         maiPanel.setBackground(new Color(123, 128, 255));
         maiPanel.add(formPanel, BorderLayout.NORTH);
-        maiPanel.add(lbWelcome, BorderLayout.CENTER);
+        maiPanel.add(scoreLabel, BorderLayout.CENTER);
         maiPanel.add(instruction, BorderLayout.CENTER);
         maiPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         add(maiPanel);
 
         setTitle("ZAMBIAN QUIZ");
-        setSize(500, 600);
+        setSize(500, 400);
         setMinimumSize(new Dimension(300, 400));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
