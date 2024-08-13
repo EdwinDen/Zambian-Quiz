@@ -12,6 +12,7 @@ import java.util.TimerTask;
 
 public class ZambiaQuiz {
     private JFrame frame;
+    private JPanel mainPanel;
     private JTextArea questionArea;
     private JRadioButton[] options;
     private ButtonGroup optionsGroup;
@@ -28,6 +29,63 @@ public class ZambiaQuiz {
     private int secondsElapsed;
 
     public ZambiaQuiz() {
+        // Create the main frame
+        frame = new JFrame("Zambian Quiz");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 400);
+        frame.setLayout(new BorderLayout());
+
+        // Show home screen
+        showHomeScreen();
+
+        // Display the frame
+        frame.setVisible(true);
+    }
+
+    private void showHomeScreen() {
+        frame.getContentPane().removeAll();
+        JPanel homePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JLabel titleLabel = new JLabel("ZED BRAIN QUIZ GAME");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        homePanel.add(titleLabel, gbc);
+
+        JButton playButton = new JButton("PLAY");
+        playButton.setPreferredSize(new Dimension(100, 50));
+        gbc.gridy = 1;
+        homePanel.add(playButton, gbc);
+
+        JButton exitButton = new JButton("EXIT");
+        exitButton.setPreferredSize(new Dimension(100, 50));
+        gbc.gridy = 2;
+        homePanel.add(exitButton, gbc);
+
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startQuiz();
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        frame.add(homePanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    private void startQuiz() {
+        frame.getContentPane().removeAll();
+
         // All 100 questions and answers
         questions = new String[][] {
                 { "What is the capital city of Zambia?", "Lusaka", "Ndola", "Kitwe", "Livingstone", "A" },
@@ -95,7 +153,9 @@ public class ZambiaQuiz {
                 { "What is the name of the traditional Zambian attire for women?", "Kanga", "Chitenge", "Dashiki",
                         "Sari", "B" },
                 { "Which Zambian province is known for its tobacco farming?", "Lusaka Province", "Central Province",
-                        "Eastern Province", "Southern Province", "C" },
+                        "Eastern Province", "Southern Province", "C"
+
+                },
                 { "Which river forms the border between Zambia and Zimbabwe?", "Kafue River", "Zambezi River",
                         "Luangwa River", "Chambeshi River", "B" },
                 { "Who is Zambia's first female vice president?", "Inonge Wina", "Edith Nawakwi", "Margaret Mwanakatwe",
@@ -210,7 +270,7 @@ public class ZambiaQuiz {
                         "C" },
                 { "Which Zambian province is known for its traditional canoe making?", "Lusaka Province",
                         "Western Province", "Southern Province", "Northern Province", "B" },
-                { "Which traditional ceremony is celebrated by the Tonga people in Zambia?", "N'cwala", "Kuomboka",
+                { "Which traditional ceremony is celebrated by the Tonga people in Zambia?", "Lwiindi", "Kuomboka",
                         "Mutomboko", "Umuganura", "A" },
                 { "Which Zambian city is known for its traditional mask making industry?", "Lusaka", "Ndola", "Kitwe",
                         "Livingstone", "D" },
@@ -229,12 +289,6 @@ public class ZambiaQuiz {
         questionsAnswered = 0;
         secondsElapsed = 0;
 
-        // Create the main frame
-        frame = new JFrame("Zambian Quiz");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLayout(new BorderLayout());
-
         // Create the timer and questions answered labels
         timerLabel = new JLabel("00:00");
         questionsAnsweredLabel = new JLabel("Questions Answered: 0/10");
@@ -247,12 +301,11 @@ public class ZambiaQuiz {
         frame.add(topPanel, BorderLayout.NORTH);
 
         // Create the main panel to hold question and options
-        JPanel mainPanel = new JPanel();
+        mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
         // Create the question area
         questionArea = new JTextArea(3, 50);
-
         questionArea.setEditable(false);
         questionArea.setLineWrap(true);
         questionArea.setWrapStyleWord(true);
@@ -281,6 +334,15 @@ public class ZambiaQuiz {
                     userAnswers[currentQuestionIndex] = optionsGroup.getSelection().getActionCommand();
                     optionsGroup.clearSelection();
                     questionsAnswered++;
+                    if (selectedQuestions.get(currentQuestionIndex)[5].equals(userAnswers[currentQuestionIndex])) {
+                        JOptionPane.showMessageDialog(frame, "Your answer is Correct", "Correct Answer",
+                                1);
+                        score++;
+                    }else{
+                        JOptionPane.showMessageDialog(frame, "Your answer is wrong. Correct answer is "+
+                                        selectedQuestions.get(currentQuestionIndex)[5], "Wrong Answer",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                     questionsAnsweredLabel.setText("Questions Answered: " + questionsAnswered + "/10");
                     currentQuestionIndex++;
                     if (currentQuestionIndex < selectedQuestions.size()) {
@@ -304,13 +366,14 @@ public class ZambiaQuiz {
         // Start the timer
         startTimer();
 
-        // Display the frame
-        frame.setVisible(true);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void displayQuestion(int questionIndex) {
         String[] question = selectedQuestions.get(questionIndex);
         questionArea.setText("Question: " + question[0]);
+        questionArea.setFont(new Font("Arial", Font.PLAIN, 20));
         for (int i = 0; i < 4; i++) {
             options[i].setText((char) ('A' + i) + ") " + question[i + 1]);
             options[i].setActionCommand(Character.toString((char) ('A' + i)));
@@ -318,12 +381,50 @@ public class ZambiaQuiz {
     }
 
     private void showResults() {
-        for (int i = 0; i < selectedQuestions.size(); i++) {
-            if (selectedQuestions.get(i)[5].equals(userAnswers[i])) {
-                score++;
+
+        timer.cancel();
+        frame.getContentPane().removeAll();
+
+        JPanel resultPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        JLabel timeLabel = new JLabel("Time: " + (secondsElapsed / 60) + " mins " + (secondsElapsed % 60) + " sec");
+        timeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        resultPanel.add(timeLabel, gbc);
+
+        gbc.gridy = 1;
+        JLabel scoreLabel = new JLabel("Score: " + score + "/" + selectedQuestions.size());
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        resultPanel.add(scoreLabel, gbc);
+
+        gbc.gridy = 2;
+        JButton playAgainButton = new JButton("PLAY AGAIN");
+        playAgainButton.setPreferredSize(new Dimension(150, 50));
+        playAgainButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showHomeScreen();
             }
-        }
-        JOptionPane.showMessageDialog(frame, "Quiz completed! Your score: " + score + "/" + selectedQuestions.size());
+        });
+        resultPanel.add(playAgainButton, gbc);
+
+        gbc.gridy = 3;
+        JButton quitButton = new JButton("QUIT");
+        quitButton.setPreferredSize(new Dimension(150, 50));
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        resultPanel.add(quitButton, gbc);
+
+        frame.add(resultPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void startTimer() {
